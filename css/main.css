@@ -1342,7 +1342,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #dfffdd;
+    background: #3393ff;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -1589,9 +1589,19 @@ pre code {
   color: #fc6423;
 }
 .site-author-image {
-  border: 1px solid #eee;
+  display: block;
+  margin: 0 auto;
+  padding: $site-author-image-padding;
   max-width: 120px;
-  padding: 2px;
+  height: $site-author-image-height;
+  border: 1px solid #eee;
+/* start*/
+  border-radius: 60%;
+  transition: 2.5s all;
+}
+.site-author-image:hover {
+  background-color: #ffb6c1;
+  transform: rotate(360deg);
 }
 .site-author-name {
   color: var(--text-color);
@@ -2310,6 +2320,10 @@ pre code {
 }
 .post-reward div span {
   display: block;
+}
+.post-reward div:hover span {
+  animation: next-roll 0.1s infinite linear;
+  pointer-events: none;
 }
 .post-reward img {
   display: inline-block;
