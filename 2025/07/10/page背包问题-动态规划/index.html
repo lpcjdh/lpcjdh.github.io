@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"nicaistudybk.xyz","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.23.1","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"foundation","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":"ture","trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="背包问题 （动态规划） (一) 背包问题学习大纲 基础概念 a. 什么是背包问题 b.背包问题的基本形式 背包问题的主要类型 a.0-1背包问题 b.完全背包问题 c.多重背包问题 d.分组背包问题 e.多维背包问题 f.树形背包问题 解法技术 优化技巧 扩展应用  (二) 正文 什么是背包问题?背包问题(Knapsack Problem)是组合优化中的一个经典问题,核心思想是——在有限的资源约束">
+    <meta name="description" content="背包问题 （动态规划） (一) 背包问题学习大纲 基础概念 a. [什么是背包问题](###什么是背包问题 ?) b. 背包问题的基本形式 背包问题的主要类型 a. 0-1背包问题 b. 完全背包问题 c. 多重背包问题 d. 分组背包问题 e. 多维背包问题 f. 树形背包问题 解法技术 优化技巧 扩展应用  (二) 正文 什么是背包问题 ？背包问题(Knapsack Problem)是组合优化">
 <meta property="og:type" content="article">
 <meta property="og:title" content="page背包问题(动态规划)">
 <meta property="og:url" content="https://nicaistudybk.xyz/2025/07/10/page%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/index.html">
 <meta property="og:site_name" content="尼采的学习博客">
-<meta property="og:description" content="背包问题 （动态规划） (一) 背包问题学习大纲 基础概念 a. 什么是背包问题 b.背包问题的基本形式 背包问题的主要类型 a.0-1背包问题 b.完全背包问题 c.多重背包问题 d.分组背包问题 e.多维背包问题 f.树形背包问题 解法技术 优化技巧 扩展应用  (二) 正文 什么是背包问题?背包问题(Knapsack Problem)是组合优化中的一个经典问题,核心思想是——在有限的资源约束">
+<meta property="og:description" content="背包问题 （动态规划） (一) 背包问题学习大纲 基础概念 a. [什么是背包问题](###什么是背包问题 ?) b. 背包问题的基本形式 背包问题的主要类型 a. 0-1背包问题 b. 完全背包问题 c. 多重背包问题 d. 分组背包问题 e. 多维背包问题 f. 树形背包问题 解法技术 优化技巧 扩展应用  (二) 正文 什么是背包问题 ？背包问题(Knapsack Problem)是组合优化">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-07-10T13:01:35.000Z">
-<meta property="article:modified_time" content="2025-07-11T09:53:48.176Z">
+<meta property="article:modified_time" content="2025-07-11T10:20:36.993Z">
 <meta property="article:author" content="灾区尼采">
 <meta name="twitter:card" content="summary">
 
@@ -158,7 +158,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98-%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">背包问题 （动态规划）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E5%AD%A6%E4%B9%A0%E5%A4%A7%E7%BA%B2"><span class="nav-number">1.1.</span> <span class="nav-text">(一) 背包问题学习大纲</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E6%AD%A3%E6%96%87"><span class="nav-number">1.2.</span> <span class="nav-text">(二) 正文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.1.</span> <span class="nav-text">什么是背包问题?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">背包问题的基本形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.3.</span> <span class="nav-text">0-1背包问题</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98-%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">背包问题 （动态规划）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E5%AD%A6%E4%B9%A0%E5%A4%A7%E7%BA%B2"><span class="nav-number">1.1.</span> <span class="nav-text">(一) 背包问题学习大纲</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E6%AD%A3%E6%96%87"><span class="nav-number">1.2.</span> <span class="nav-text">(二) 正文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98-%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">什么是背包问题 ？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">背包问题的基本形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.3.</span> <span class="nav-text">0-1背包问题</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -251,7 +251,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-11 17:53:48" itemprop="dateModified" datetime="2025-07-11T17:53:48+08:00">2025-07-11</time>
+      <time title="修改时间：2025-07-11 18:20:36" itemprop="dateModified" datetime="2025-07-11T18:20:36+08:00">2025-07-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -277,14 +277,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>459</span>
+      <span>607</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -296,14 +296,14 @@
       
       <div class="post-body" itemprop="articleBody"><h1 id="背包问题-（动态规划）"><a href="#背包问题-（动态规划）" class="headerlink" title="背包问题 （动态规划）"></a>背包问题 （动态规划）</h1><hr>
 <h2 id="一-背包问题学习大纲"><a href="#一-背包问题学习大纲" class="headerlink" title="(一) 背包问题学习大纲"></a>(一) 背包问题学习大纲</h2><ol>
-<li>基础概念<br> <a href="###%E4%BB%80%E4%B9%88%E6%98%AF%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">a. 什么是背包问题</a><br> <a href="###%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BD%A2%E5%BC%8F">b.背包问题的基本形式</a></li>
-<li>背包问题的主要类型<br> <a href="###0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">a.0-1背包问题</a><br> <a href="###%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">b.完全背包问题</a><br> <a href="###%E5%A4%9A%E9%87%8D%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">c.多重背包问题</a><br> <a href="###%E5%88%86%E7%BB%84%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">d.分组背包问题</a><br> <a href="###%E5%A4%9A%E7%BB%B4%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">e.多维背包问题</a><br> <a href="###%E6%A0%91%E5%BD%A2%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">f.树形背包问题</a></li>
+<li>基础概念<br> a. [什么是背包问题](###什么是背包问题 ?)<br> b. <a href="###%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BD%A2%E5%BC%8F">背包问题的基本形式</a></li>
+<li>背包问题的主要类型<br> a. <a href="###0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">0-1背包问题</a><br> b. <a href="###%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">完全背包问题</a><br> c. <a href="###%E5%A4%9A%E9%87%8D%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">多重背包问题</a><br> d. <a href="###%E5%88%86%E7%BB%84%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">分组背包问题</a><br> e. <a href="###%E5%A4%9A%E7%BB%B4%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">多维背包问题</a><br> f. <a href="###%E6%A0%91%E5%BD%A2%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">树形背包问题</a></li>
 <li>解法技术</li>
 <li>优化技巧</li>
 <li>扩展应用</li>
 </ol>
 <h2 id="二-正文"><a href="#二-正文" class="headerlink" title="(二) 正文"></a>(二) 正文</h2><hr>
-<h3 id="什么是背包问题"><a href="#什么是背包问题" class="headerlink" title="什么是背包问题?"></a>什么是背包问题?</h3><p>背包问题(Knapsack Problem)是组合优化中的一个经典问题<br>,核心思想是——在有限的资源约束下，如何选择物品的组合，来实现目标<br>限通常描述如下：<br>给定一个容量为 <em>W</em> 的背包, 以及 <em>n</em>个物品, 每个物品 <em>i</em> 有:</p>
+<h3 id="什么是背包问题-？"><a href="#什么是背包问题-？" class="headerlink" title="什么是背包问题 ？"></a>什么是背包问题 ？</h3><p>背包问题(Knapsack Problem)是组合优化中的一个经典问题<br>,核心思想是——在有限的资源约束下，如何选择物品的组合，来实现目标<br>限通常描述如下：<br>给定一个容量为 <em>W</em> 的背包, 以及 <em>n</em>个物品, 每个物品 <em>i</em> 有:</p>
 <ul>
 <li>一个重量 <em>w<del>i</del></em> （weight）</li>
 <li>一个价值 <em>v<del>i</del></em>（value）<br>目标：选择若干物品装入背包，使得总重量不超过 <em>W</em> ，且总价值最大。</li>
@@ -315,6 +315,94 @@
 <li>价值与重量 -&gt; 收益与成本（利润与投入 、 重要性与耗时）。</li>
 </ul>
 <h3 id="背包问题的基本形式"><a href="#背包问题的基本形式" class="headerlink" title="背包问题的基本形式"></a>背包问题的基本形式</h3><h3 id="0-1背包问题"><a href="#0-1背包问题" class="headerlink" title="0-1背包问题"></a>0-1背包问题</h3><p>例子：</p>
+<table>
+<thead>
+<tr>
+<th>物品</th>
+<th>重量</th>
+<th>价值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>葡萄</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>矿泉水</td>
+<td>3</td>
+<td>5</td>
+</tr>
+<tr>
+<td>西瓜</td>
+<td>4</td>
+<td>6</td>
+</tr>
+<tr>
+<td>有一个背包能放的最大容量（承载重量）为6，每个物品只能选择取或者不取</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>物品&#x2F;容量</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td></td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>葡萄（2，3）</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>2</td>
+<td>矿泉水（3，5）</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>5</td>
+<td>5</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<td>3</td>
+<td>西瓜（4，6）</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>5</td>
+<td>6</td>
+<td>8</td>
+<td>9</td>
+</tr>
+</tbody></table>
 
       </div>
 
@@ -404,7 +492,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    阅读本站耗时&asymp;<span title="站点阅读时长">43 分钟</span>
+    阅读本站耗时&asymp;<span title="站点阅读时长">44 分钟</span>
   </span>
 </div>
 <div class="busuanzi-count">
