@@ -450,6 +450,379 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
+<!-- 卡片展开/收起功能 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const postCards = document.querySelectorAll('.post-card');
+  
+  postCards.forEach((card, index) => {
+    // 添加动画延迟
+    card.style.animationDelay = `${index * 0.1}s`;
+    
+    card.addEventListener('click', function(e) {
+      // 避免点击链接时触发
+      if (e.target.tagName !== 'A' && !e.target.closest('a')) {
+        this.classList.toggle('expanded');
+        
+        // 添加展开/收起的平滑动画
+        if (this.classList.contains('expanded')) {
+          this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        } else {
+          this.style.transition = 'all 0.3s ease-out';
+        }
+      }
+    });
+    
+    // 添加键盘支持
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.classList.toggle('expanded');
+      }
+    });
+    
+    // 添加 tabindex 使卡片可以获得焦点
+    card.setAttribute('tabindex', '0');
+  });
+  
+  // 添加全局键盘快捷键
+  document.addEventListener('keydown', function(e) {
+    // 按 'E' 键展开所有卡片
+    if (e.key.toLowerCase() === 'e' && !e.ctrlKey && !e.altKey) {
+      const allCards = document.querySelectorAll('.post-card');
+      const hasExpanded = document.querySelector('.post-card.expanded');
+      
+      allCards.forEach(card => {
+        if (hasExpanded) {
+          card.classList.remove('expanded'); // 如果有展开的，就全部收起
+        } else {
+          card.classList.add('expanded');    // 如果没有展开的，就全部展开
+        }
+      });
+    }
+  });
+});
+</script>
 
+<!-- 平滑滚动优化 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 为所有内部链接添加平滑滚动
+  const links = document.querySelectorAll('a[href^="#"]');
+  
+  links.forEach(link => {
+    link.addEventListener('click', function(e) {
+      const targetId = this.getAttribute('href').substring(1);
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        e.preventDefault();
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+});
+</script>
+
+<!-- 图片懒加载优化 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 创建 Intersection Observer 用于图片懒加载
+  const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+          img.classList.add('loaded');
+          observer.unobserve(img);
+        }
+      }
+    });
+  }, {
+    rootMargin: '50px 0px',
+    threshold: 0.1
+  });
+
+  // 观察所有带有 data-src 的图片
+  const lazyImages = document.querySelectorAll('img[data-src]');
+  lazyImages.forEach(img => imageObserver.observe(img));
+});
+</script>
+
+<!-- 阅读进度指示器 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 只在文章页面显示阅读进度
+  if (document.querySelector('.post-body')) {
+    const progressBar = document.createElement('div');
+    progressBar.className = 'reading-progress';
+    progressBar.innerHTML = '<div class="reading-progress-fill"></div>';
+    document.body.appendChild(progressBar);
+    
+    const progressFill = progressBar.querySelector('.reading-progress-fill');
+    
+    window.addEventListener('scroll', function() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrolled = window.scrollY;
+      const progress = (scrolled / documentHeight) * 100;
+      
+      progressFill.style.width = Math.min(progress, 100) + '%';
+      
+      // 添加动态颜色
+      if (progress < 33) {
+        progressFill.style.background = 'linear-gradient(90deg, #ff7fbb, #ff9f7f)';
+      } else if (progress < 66) {
+        progressFill.style.background = 'linear-gradient(90deg, #ff9f7f, #7fbbff)';
+      } else {
+        progressFill.style.background = 'linear-gradient(90deg, #7fbbff, #7fff7f)';
+      }
+    });
+  }
+});
+</script>
+
+<!-- 代码块复制功能增强 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const codeBlocks = document.querySelectorAll('pre code');
+  
+  codeBlocks.forEach(codeBlock => {
+    const pre = codeBlock.parentElement;
+    if (!pre.querySelector('.copy-btn')) {
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-btn';
+      copyBtn.innerHTML = '📋';
+      copyBtn.title = '复制代码';
+      
+      copyBtn.addEventListener('click', async function() {
+        try {
+          await navigator.clipboard.writeText(codeBlock.textContent);
+          this.innerHTML = '✅';
+          this.title = '已复制!';
+          
+          setTimeout(() => {
+            this.innerHTML = '📋';
+            this.title = '复制代码';
+          }, 2000);
+        } catch (err) {
+          console.error('复制失败:', err);
+          this.innerHTML = '❌';
+          setTimeout(() => {
+            this.innerHTML = '📋';
+          }, 2000);
+        }
+      });
+      
+      pre.style.position = 'relative';
+      pre.appendChild(copyBtn);
+    }
+  });
+});
+</script>
+
+<!-- 返回顶部按钮增强 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const backToTop = document.querySelector('.back-to-top');
+  
+  if (backToTop) {
+    window.addEventListener('scroll', function() {
+      const scrolled = window.scrollY;
+      const windowHeight = window.innerHeight;
+      
+      // 动态调整按钮透明度
+      if (scrolled > windowHeight * 0.3) {
+        backToTop.style.opacity = Math.min((scrolled - windowHeight * 0.3) / (windowHeight * 0.2), 1);
+      } else {
+        backToTop.style.opacity = 0;
+      }
+      
+      // 添加滚动百分比显示
+      const percent = Math.round((scrolled / (document.documentElement.scrollHeight - windowHeight)) * 100);
+      backToTop.setAttribute('data-percent', percent + '%');
+    });
+  }
+});
+</script>
+
+<style>
+/* 卡片焦点样式 */
+.post-card:focus {
+  outline: 2px solid #7fbbff;
+  outline-offset: 4px;
+}
+
+/* 阅读进度条样式 */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.reading-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff7fbb, #7fbbff);
+  transition: width 0.1s ease-out, background 0.3s ease;
+  border-radius: 0 2px 2px 0;
+}
+
+/* 代码复制按钮样式 */
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(45, 45, 45, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f0f0f0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.copy-btn:hover {
+  background: rgba(127, 187, 255, 0.3);
+  border-color: #7fbbff;
+  transform: translateY(-1px);
+}
+
+/* 返回顶部按钮增强 */
+.back-to-top::after {
+  content: attr(data-percent);
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(45, 45, 45, 0.9);
+  color: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.back-to-top:hover::after {
+  opacity: 1;
+}
+
+/* 平滑过渡优化 */
+.post-card.expanded {
+  animation: expandCard 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes expandCard {
+  from {
+    max-height: 200px;
+  }
+  to {
+    max-height: 2000px; /* 足够大的值 */
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .copy-btn {
+    top: 5px;
+    right: 5px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  .reading-progress {
+    height: 3px;
+  }
+}
+</style>
+
+<!-- 提示用户快捷键 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 在页面加载后3秒显示快捷键提示
+  setTimeout(function() {
+    if (document.querySelectorAll('.post-card').length > 1) {
+      const toast = document.createElement('div');
+      toast.className = 'keyboard-hint';
+      toast.innerHTML = '💡 按 <kbd>E</kbd> 键可展开/收起所有卡片';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.remove(), 4000);
+    }
+  }, 3000);
+});
+</script>
+
+<style>
+.keyboard-hint {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(45, 45, 45, 0.95);
+  backdrop-filter: blur(10px);
+  color: #f0f0f0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  z-index: 1000;
+  animation: slideInUp 0.4s ease-out, fadeOut 0.4s ease-in 3.6s forwards;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.keyboard-hint kbd {
+  background: linear-gradient(45deg, #7fbbff, #ff7fbb);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: bold;
+  margin: 0 2px;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@media (max-width: 768px) {
+  .keyboard-hint {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    font-size: 13px;
+    text-align: center;
+  }
+}
+</style>
 </body>
 </html>
