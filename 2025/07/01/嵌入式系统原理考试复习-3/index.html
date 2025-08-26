@@ -609,265 +609,238 @@
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
 <script>
-// 修复版的卡片展开功能
+// 修复版的卡片展开功能 - 解决重复按钮和高度问题
 document.addEventListener('DOMContentLoaded', function() {
   console.log('开始初始化卡片展开功能...');
   
-  // NexT主题可能使用的选择器
-  const possibleSelectors = [
-    'article.post',           // 最常见
-    '.post-block',           // 你样式中定义的
-    '.post',                 // 简单版本
-    '.index-post',           // 首页文章
-    '.post-card'             // 自定义类名
-  ];
-  
-  let targetCards = [];
-  let usedSelector = '';
-  
-  // 尝试找到正确的选择器
-  for (let selector of possibleSelectors) {
-    const elements = document.querySelectorAll(selector);
-    if (elements.length > 0) {
-      // 只在首页或归档页使用展开功能，排除单篇文章页
-      if (!document.querySelector('.post-body') || elements.length > 1) {
-        targetCards = Array.from(elements);
-        usedSelector = selector;
-        break;
+  // 延迟执行，确保页面完全加载
+  setTimeout(function() {
+    // NexT主题可能使用的选择器
+    const possibleSelectors = [
+      'article.post',
+      '.post-block', 
+      '.post',
+      '.index-post',
+      '.post-card'
+    ];
+    
+    let targetCards = [];
+    let usedSelector = '';
+    
+    // 尝试找到正确的选择器
+    for (let selector of possibleSelectors) {
+      const elements = document.querySelectorAll(selector);
+      if (elements.length > 0) {
+        // 只在首页或归档页使用展开功能，排除单篇文章页
+        if (!document.querySelector('.post-body') || elements.length > 1) {
+          targetCards = Array.from(elements);
+          usedSelector = selector;
+          break;
+        }
       }
     }
-  }
-  
-  if (targetCards.length === 0) {
-    console.log('未找到可展开的卡片元素');
-    return;
-  }
-  
-  console.log(`找到 ${targetCards.length} 个卡片，使用选择器: ${usedSelector}`);
-  
-  // 为每个卡片添加必要的类名和样式
-  targetCards.forEach((card, index) => {
-    // 确保有正确的类名
-    if (!card.classList.contains('post-card') && !card.classList.contains('post-block')) {
-      card.classList.add('post-card');
+    
+    if (targetCards.length === 0) {
+      console.log('未找到可展开的卡片元素');
+      return;
     }
     
-    // 设置初始状态
-    card.style.cursor = 'pointer';
-    card.style.transition = 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)';
-    card.style.overflow = 'hidden';
-    card.style.position = 'relative';
+    console.log(`找到 ${targetCards.length} 个卡片，使用选择器: ${usedSelector}`);
     
-    // 设置初始最大高度（如果没有设置）
-    const computedStyle = window.getComputedStyle(card);
-    if (!card.style.maxHeight && !computedStyle.maxHeight.includes('px')) {
+    // 为每个卡片添加功能
+    targetCards.forEach((card, index) => {
+      console.log(`处理卡片 ${index + 1}:`, card);
+      
+      // 添加必要的类名
+      if (!card.classList.contains('post-card')) {
+        card.classList.add('post-card');
+      }
+      
+      // 设置基础样式
+      card.style.cursor = 'pointer';
+      card.style.position = 'relative';
+      card.style.overflow = 'hidden';
+      
+      // 强制设置初始高度
       card.style.maxHeight = '220px';
-    }
-    
-    // 查找或创建摘要内容
-    let excerpt = card.querySelector('.post-excerpt, .post-summary, .post-content p');
-    if (!excerpt) {
-      // 如果没有摘要，查找文章内容的第一段
-      const content = card.querySelector('.post-body, .post-content, .entry-content');
-      if (content) {
-        const firstP = content.querySelector('p');
-        if (firstP) {
-          excerpt = firstP;
-          excerpt.classList.add('post-excerpt');
-        }
-      }
-    }
-    
-    // 添加展开/收起按钮
-    if (!card.querySelector('.read-more')) {
-      const readMoreBtn = document.createElement('div');
-      readMoreBtn.className = 'read-more';
-      readMoreBtn.innerHTML = '<span>展开 ↓</span>';
-      readMoreBtn.style.cssText = `
-        position: absolute;
-        bottom: 18px;
-        right: 22px;
-        color: rgba(107, 163, 245, 0.8);
-        font-size: 0.82em;
-        font-weight: 550;
-        transition: all 0.3s ease;
-        z-index: 3;
-        padding: 6px 12px;
-        border-radius: 8px;
-        background: rgba(50, 70, 100, 0.4);
-        border: 1px solid rgba(100, 120, 150, 0.2);
-        cursor: pointer;
-      `;
-      card.appendChild(readMoreBtn);
-    }
-    
-    // 添加渐变遮罩
-    if (!card.querySelector('.fade-mask')) {
-      const fadeMask = document.createElement('div');
-      fadeMask.className = 'fade-mask';
-      fadeMask.style.cssText = `
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 60px;
-        background: linear-gradient(to top, rgba(35, 40, 50, 0.6) 0%, rgba(35, 40, 50, 0.3) 50%, transparent 100%);
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-        z-index: 2;
-      `;
-      card.appendChild(fadeMask);
-    }
-    
-    // 添加点击事件
-    card.addEventListener('click', function(e) {
-      // 避免点击链接时触发
-      if (e.target.tagName === 'A' || e.target.closest('a')) {
-        return;
-      }
+      card.style.height = 'auto';
       
-      const isExpanded = this.classList.contains('expanded');
-      const readMoreBtn = this.querySelector('.read-more');
-      const fadeMask = this.querySelector('.fade-mask');
-      
-      if (isExpanded) {
-        // 收起
-        this.classList.remove('expanded');
-        this.style.maxHeight = '220px';
-        if (readMoreBtn) {
-          readMoreBtn.innerHTML = '<span>展开 ↓</span>';
-        }
-        if (fadeMask) {
-          fadeMask.style.opacity = '1';
-        }
-        console.log(`卡片 ${index + 1} 已收起`);
+      // 检查是否已有展开按钮，如果有则使用现有的，否则创建新的
+      let readMoreBtn = card.querySelector('.read-more');
+      if (!readMoreBtn) {
+        readMoreBtn = document.createElement('div');
+        readMoreBtn.className = 'read-more';
+        readMoreBtn.innerHTML = '展开 ↓';
+        readMoreBtn.style.cssText = `
+          position: absolute;
+          bottom: 18px;
+          right: 22px;
+          color: rgba(107, 163, 245, 0.8);
+          font-size: 0.82em;
+          font-weight: 550;
+          transition: all 0.3s ease;
+          z-index: 3;
+          padding: 6px 12px;
+          border-radius: 8px;
+          background: rgba(50, 70, 100, 0.4);
+          border: 1px solid rgba(100, 120, 150, 0.2);
+          cursor: pointer;
+        `;
+        card.appendChild(readMoreBtn);
+        console.log(`为卡片 ${index + 1} 创建了展开按钮`);
       } else {
-        // 展开
-        this.classList.add('expanded');
-        this.style.maxHeight = 'none';
-        if (readMoreBtn) {
-          readMoreBtn.innerHTML = '<span>收起 ↑</span>';
-        }
-        if (fadeMask) {
-          fadeMask.style.opacity = '0';
-        }
-        console.log(`卡片 ${index + 1} 已展开`);
+        console.log(`卡片 ${index + 1} 已有展开按钮，将复用`);
       }
-    });
-    
-    // 键盘支持
-    card.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        this.click();
+      
+      // 检查是否已有遮罩，如果没有则创建
+      let fadeMask = card.querySelector('.fade-mask');
+      if (!fadeMask) {
+        // 检查是否有CSS的::before伪元素遮罩
+        const hasCSSmask = window.getComputedStyle(card, '::before').content !== 'none';
+        if (!hasCSSmask) {
+          fadeMask = document.createElement('div');
+          fadeMask.className = 'fade-mask';
+          fadeMask.style.cssText = `
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to top, rgba(35, 40, 50, 0.6) 0%, rgba(35, 40, 50, 0.3) 50%, transparent 100%);
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 2;
+          `;
+          card.appendChild(fadeMask);
+        }
       }
-    });
-    
-    // 添加 tabindex 支持键盘导航
-    card.setAttribute('tabindex', '0');
-    
-    console.log(`卡片 ${index + 1} 初始化完成`);
-  });
-  
-  // 全局快捷键 - 按 E 键展开/收起所有
-  document.addEventListener('keydown', function(e) {
-    if (e.key.toLowerCase() === 'e' && !e.ctrlKey && !e.altKey) {
-      // 确保不是在输入框中
-      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-        e.preventDefault();
+      
+      // 添加点击事件 - 移除之前的事件监听器避免重复
+      const newCard = card.cloneNode(true);
+      card.parentNode.replaceChild(newCard, card);
+      
+      // 重新获取按钮和遮罩引用
+      readMoreBtn = newCard.querySelector('.read-more');
+      fadeMask = newCard.querySelector('.fade-mask');
+      
+      newCard.addEventListener('click', function(e) {
+        // 避免点击链接时触发
+        if (e.target.tagName === 'A' || e.target.closest('a')) {
+          return;
+        }
         
-        const hasExpanded = document.querySelector('.expanded');
-        console.log(hasExpanded ? '收起所有卡片' : '展开所有卡片');
+        const isExpanded = this.classList.contains('expanded');
         
-        targetCards.forEach(card => {
-          const readMoreBtn = card.querySelector('.read-more');
-          const fadeMask = card.querySelector('.fade-mask');
-          
-          if (hasExpanded) {
-            // 收起所有
-            card.classList.remove('expanded');
-            card.style.maxHeight = '220px';
-            if (readMoreBtn) readMoreBtn.innerHTML = '<span>展开 ↓</span>';
-            if (fadeMask) fadeMask.style.opacity = '1';
-          } else {
-            // 展开所有
-            card.classList.add('expanded');
-            card.style.maxHeight = 'none';
-            if (readMoreBtn) readMoreBtn.innerHTML = '<span>收起 ↑</span>';
-            if (fadeMask) fadeMask.style.opacity = '0';
+        if (isExpanded) {
+          // 收起
+          this.classList.remove('expanded');
+          this.style.maxHeight = '220px';
+          this.style.height = 'auto';
+          if (readMoreBtn) {
+            readMoreBtn.innerHTML = '展开 ↓';
           }
-        });
+          if (fadeMask) {
+            fadeMask.style.opacity = '1';
+          }
+          console.log(`卡片 ${index + 1} 已收起`);
+        } else {
+          // 展开
+          this.classList.add('expanded');
+          // 获取实际内容高度
+          const scrollHeight = this.scrollHeight;
+          this.style.maxHeight = Math.max(scrollHeight + 50, 400) + 'px';
+          this.style.height = 'auto';
+          
+          // 稍后完全移除高度限制
+          setTimeout(() => {
+            if (this.classList.contains('expanded')) {
+              this.style.maxHeight = 'none';
+              this.style.minHeight = 'auto';
+            }
+          }, 300);
+          
+          if (readMoreBtn) {
+            readMoreBtn.innerHTML = '收起 ↑';
+          }
+          if (fadeMask) {
+            fadeMask.style.opacity = '0';
+          }
+          console.log(`卡片 ${index + 1} 已展开，高度: ${scrollHeight}px`);
+        }
+      });
+      
+      // 键盘支持
+      newCard.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
+      
+      newCard.setAttribute('tabindex', '0');
+      
+      // 更新targetCards数组中的引用
+      targetCards[index] = newCard;
+      
+      console.log(`卡片 ${index + 1} 初始化完成`);
+    });
+    
+    // 全局快捷键
+    document.addEventListener('keydown', function(e) {
+      if (e.key.toLowerCase() === 'e' && !e.ctrlKey && !e.altKey) {
+        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          
+          const hasExpanded = document.querySelector('.expanded');
+          console.log(hasExpanded ? '收起所有卡片' : '展开所有卡片');
+          
+          targetCards.forEach((card, idx) => {
+            const readMoreBtn = card.querySelector('.read-more');
+            const fadeMask = card.querySelector('.fade-mask');
+            
+            if (hasExpanded) {
+              // 收起所有
+              card.classList.remove('expanded');
+              card.style.maxHeight = '220px';
+              card.style.height = 'auto';
+              if (readMoreBtn) readMoreBtn.innerHTML = '展开 ↓';
+              if (fadeMask) fadeMask.style.opacity = '1';
+            } else {
+              // 展开所有
+              card.classList.add('expanded');
+              const scrollHeight = card.scrollHeight;
+              card.style.maxHeight = Math.max(scrollHeight + 50, 400) + 'px';
+              
+              setTimeout(() => {
+                if (card.classList.contains('expanded')) {
+                  card.style.maxHeight = 'none';
+                }
+              }, 300);
+              
+              if (readMoreBtn) readMoreBtn.innerHTML = '收起 ↑';
+              if (fadeMask) fadeMask.style.opacity = '0';
+            }
+          });
+        }
       }
-    }
-  });
-  
-  // 显示使用提示
-  if (targetCards.length > 1) {
-    setTimeout(() => {
-      console.log('💡 提示：点击卡片展开内容，按 E 键可展开/收起所有卡片');
-      
-      // 可选：显示屏幕提示
-      const hint = document.createElement('div');
-      hint.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: rgba(35, 40, 50, 0.95);
-        color: #e8eaf0;
-        padding: 12px 16px;
-        border-radius: 8px;
-        border: 1px solid rgba(100, 120, 150, 0.3);
-        font-size: 14px;
-        z-index: 1000;
-        animation: slideIn 0.5s ease-out;
-        box-shadow: 0 4px 12px rgba(5, 10, 20, 0.3);
-      `;
-      hint.innerHTML = '💡 按 <kbd style="background: rgba(107, 163, 245, 0.2); padding: 2px 6px; border-radius: 4px; color: #6ba3f5;">E</kbd> 键展开/收起所有卡片';
-      
-      document.body.appendChild(hint);
-      
-      setTimeout(() => {
-        hint.style.animation = 'slideOut 0.5s ease-in forwards';
-        setTimeout(() => hint.remove(), 500);
-      }, 3000);
-      
-    }, 2000);
-  }
+    });
+    
+    console.log('卡片展开功能初始化完成');
+    
+  }, 500); // 延迟500ms确保页面完全加载
 });
 
-// 添加必要的 CSS 动画
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-  
-  /* 确保展开状态的样式 */
+// 添加强制样式覆盖
+const forceStyle = document.createElement('style');
+forceStyle.textContent = `
+  /* 强制覆盖展开状态 */
   .post-card.expanded,
   .post-block.expanded,
   .post.expanded,
   article.post.expanded {
     max-height: none !important;
     overflow: visible !important;
+    height: auto !important;
   }
   
   .post-card.expanded .fade-mask,
@@ -877,16 +850,21 @@ style.textContent = `
     opacity: 0 !important;
   }
   
-  /* 焦点样式 */
-  .post-card:focus,
-  .post-block:focus,
-  .post:focus,
-  article.post:focus {
-    outline: 2px solid rgba(107, 163, 245, 0.5);
-    outline-offset: 2px;
+  /* 确保展开按钮样式 */
+  .read-more {
+    position: absolute !important;
+    bottom: 18px !important;
+    right: 22px !important;
+    z-index: 10 !important;
+    pointer-events: auto !important;
+  }
+  
+  /* 隐藏可能的重复元素 */
+  .post-card .read-more:not(:last-of-type) {
+    display: none !important;
   }
 `;
-document.head.appendChild(style);
+document.head.appendChild(forceStyle);
 </script>
 </body>
 </html>
